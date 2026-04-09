@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Stockbrot – Lagerfeuer-Abende für Groß & Klein</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700;9..144,900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --night:#0f0d0a;
+  --deep:#191410;
+  --ember:#c94a0f;
+  --fire:#e8622a;
+  --glow:#f5a623;
+  --warm:#fde68a;
+  --cream:#fdf6ec;
+  --muted:rgba(253,246,236,.55);
+  --faint:rgba(253,246,236,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--night);color:var(--cream);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 2.5rem;
+  background:rgba(15,13,10,.82);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(245,166,35,.08);
+}
+.nav-logo{
+  font-family:'Fraunces',serif;font-size:1.2rem;
+  color:var(--glow);font-weight:700;text-decoration:none;
+  display:flex;align-items:center;gap:.5rem;
+}
+.nav-links{display:flex;gap:1.8rem;list-style:none}
+.nav-links a{
+  color:var(--muted);font-size:.8rem;
+  letter-spacing:.08em;text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover{color:var(--glow)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;color:var(--glow);padding:.2rem}
+@media(max-width:680px){
+  nav{padding:.85rem 1.4rem}
+  .nav-links{
+    display:none;position:fixed;inset:0;
+    background:rgba(15,13,10,.97);
+    flex-direction:column;align-items:center;justify-content:center;
+    gap:2.2rem;z-index:200;
+  }
+  .nav-links.open{display:flex}
+  .nav-links a{font-size:1.15rem}
+  .hamburger{display:block;z-index:201}
+}
+
+/* ── HERO ── */
+#hero{
+  position:relative;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:7rem 2rem 5rem;
+  overflow:hidden;
+}
+/* Sky gradient – dusk/night */
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -5%, #2a1e3a 0%, transparent 60%),
+    radial-gradient(ellipse 100% 50% at 50% 100%, #1a1008 0%, transparent 55%),
+    linear-gradient(to bottom, #0d0b14 0%, #100e0a 55%, #1a1208 100%);
+}
+/* The canvas is the sparks – positioned to cover entire hero */
+#sparks{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+/* Fire glow at bottom – sits above bg but below content */
+.fire-glow{
+  position:absolute;
+  bottom:-20px;left:50%;
+  transform:translateX(-50%);
+  width:min(700px, 120vw);
+  height:320px;
+  background:radial-gradient(ellipse at 50% 100%,
+    rgba(232,98,42,.58) 0%,
+    rgba(201,74,15,.3) 28%,
+    rgba(245,166,35,.08) 55%,
+    transparent 72%);
+  filter:blur(12px);
+  animation:breathe 3.8s ease-in-out infinite;
+  z-index:2;
+}
+@keyframes breathe{
+  0%,100%{opacity:.8;transform:translateX(-50%) scaleY(1)}
+  50%{opacity:1;transform:translateX(-50%) scaleY(1.1)}
+}
+/* Stars */
+.stars{position:absolute;inset:0;z-index:0;overflow:hidden}
+.star{
+  position:absolute;background:#fff;border-radius:50%;
+  animation:twinkle var(--d) ease-in-out var(--dl) infinite;
+}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.9}}
+
+/* Hero content above everything */
+.hero-content{position:relative;z-index:3}
+.hero-badge{
+  display:inline-block;
+  border:1px solid rgba(245,166,35,.28);
+  color:var(--glow);font-size:.7rem;
+  letter-spacing:.38em;text-transform:uppercase;
+  padding:.38rem 1.1rem;border-radius:999px;
+  margin-bottom:2rem;
+  background:rgba(245,166,35,.05);
+  opacity:0;animation:fadeUp .6s .15s forwards;
+}
+.hero-title{
+  font-family:'Fraunces',serif;
+  font-size:clamp(4rem,14vw,10rem);
+  font-weight:900;line-height:.88;
+  letter-spacing:-.02em;
+  color:var(--cream);
+  text-shadow:0 0 100px rgba(232,98,42,.4);
+  opacity:0;animation:fadeUp .8s .35s forwards;
+}
+.hero-title .accent{
+  display:block;
+  background:linear-gradient(135deg,var(--glow) 10%,var(--fire) 70%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  margin-top:1.6rem;
+  font-size:clamp(.95rem,2.2vw,1.15rem);
+  font-weight:300;
+  font-style:italic;
+  line-height:1.8;
+  color:rgba(253,246,236,.58);
+  max-width:500px;margin-left:auto;margin-right:auto;
+  opacity:0;animation:fadeUp .8s .55s forwards;
+}
+.hero-cta{
+  margin-top:2.8rem;
+  display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;
+  opacity:0;animation:fadeUp .8s .75s forwards;
+}
+.btn{
+  padding:.72rem 1.8rem;border-radius:999px;
+  font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:500;
+  letter-spacing:.04em;text-decoration:none;border:none;cursor:pointer;
+  transition:transform .22s,box-shadow .22s,background .22s;
+  display:inline-block;
+}
+.btn-fire{
+  background:linear-gradient(135deg,var(--fire),var(--ember));
+  color:#fff;
+  box-shadow:0 4px 24px rgba(232,98,42,.38);
+}
+.btn-fire:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(232,98,42,.55)}
+.btn-outline{
+  background:rgba(255,255,255,.05);
+  color:var(--cream);
+  border:1px solid rgba(255,255,255,.14);
+}
+.btn-outline:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.scroll-hint{
+  position:absolute;bottom:1.8rem;left:50%;
+  transform:translateX(-50%);
+  z-index:3;color:rgba(245,166,35,.3);
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;
+  animation:nudge 2.2s ease-in-out infinite;
+}
+@keyframes nudge{0%,100%{transform:translateX(-50%) translateY(0)}55%{transform:translateX(-50%) translateY(7px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── TEASER BAND ── */
+.teaser-band{
+  background:var(--deep);
+  padding:5rem 2rem;
+}
+.teaser-inner{max-width:1080px;margin:0 auto}
+.teaser-label{
+  font-size:.68rem;font-weight:500;letter-spacing:.35em;
+  text-transform:uppercase;color:var(--glow);
+  margin-bottom:.7rem;text-align:center;
+}
+.teaser-title{
+  font-family:'Fraunces',serif;
+  font-size:clamp(1.8rem,4.5vw,2.8rem);
+  font-weight:700;line-height:1.1;
+  text-align:center;color:var(--cream);
+  margin-bottom:1rem;
+}
+.teaser-sub{
+  text-align:center;
+  font-size:.98rem;line-height:1.85;
+  color:var(--muted);
+  max-width:600px;margin:0 auto 3.5rem;
+}
+
+/* ── RECIPE PREVIEW ── */
+.recipe-split{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;
+  margin-bottom:1.5rem;
+}
+@media(max-width:680px){.recipe-split{grid-template-columns:1fr}}
+.recipe-mini{
+  background:var(--faint);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;padding:2rem;
+  position:relative;overflow:hidden;
+  transition:transform .28s,border-color .28s;
+}
+.recipe-mini:hover{transform:translateY(-4px);border-color:rgba(245,166,35,.2)}
+.recipe-mini::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.recipe-mini.savory::before{background:linear-gradient(90deg,#4a6741,#8ab87a)}
+.recipe-mini.sweet::before{background:linear-gradient(90deg,var(--fire),var(--glow))}
+.rm-icon{font-size:2rem;display:block;margin-bottom:.7rem}
+.rm-type{
+  font-size:.64rem;font-weight:500;letter-spacing:.28em;
+  text-transform:uppercase;margin-bottom:.3rem;
+}
+.savory .rm-type{color:#8ab87a}
+.sweet  .rm-type{color:var(--glow)}
+.rm-name{
+  font-family:'Fraunces',serif;font-size:1.45rem;
+  font-weight:700;color:var(--cream);margin-bottom:.8rem;
+}
+.rm-meta{
+  font-size:.78rem;color:rgba(253,246,236,.35);
+  margin-bottom:1.2rem;
+}
+.ing-list-mini{list-style:none;margin-bottom:1.4rem}
+.ing-list-mini li{
+  display:flex;gap:.7rem;padding:.38rem 0;
+  border-bottom:1px solid rgba(255,255,255,.05);font-size:.86rem;
+}
+.iq{font-weight:500;min-width:68px;flex-shrink:0}
+.savory .iq{color:#8ab87a}
+.sweet  .iq{color:var(--glow)}
+.in{color:rgba(253,246,236,.68)}
+.step-mini{list-style:none;counter-reset:sm}
+.step-mini li{
+  counter-increment:sm;
+  display:flex;gap:.85rem;
+  padding:.55rem 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.84rem;line-height:1.65;
+  color:rgba(253,246,236,.6);
+}
+.step-mini li::before{
+  content:counter(sm);
+  font-family:'Fraunces',serif;font-size:1.1rem;font-weight:900;
+  flex-shrink:0;
+}
+.savory .step-mini li::before{color:#8ab87a}
+.sweet  .step-mini li::before{color:var(--glow)}
+.hint-note{
+  margin-top:.5rem;
+  font-size:.8rem;font-style:italic;
+  color:rgba(253,246,236,.32);
+  line-height:1.6;
+}
+.savory .hint-note{color:rgba(138,184,122,.45)}
+.sweet  .hint-note{color:rgba(245,166,35,.4)}
+
+/* ── QUICK HINT ROW (Feuer & Toppings) ── */
+.hint-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;
+  margin-top:1.2rem;
+}
+@media(max-width:680px){.hint-row{grid-template-columns:1fr}}
+.hint-card{
+  background:var(--faint);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;
+  padding:1.4rem 1.6rem;
+  display:flex;align-items:flex-start;gap:1rem;
+  transition:border-color .25s,transform .25s;
+  text-decoration:none;
+  color:inherit;
+}
+.hint-card:hover{border-color:rgba(245,166,35,.18);transform:translateY(-2px)}
+.hint-card .hc-icon{font-size:2rem;flex-shrink:0;margin-top:.1rem}
+.hint-card .hc-body{}
+.hint-card .hc-label{
+  font-size:.63rem;font-weight:500;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--glow);margin-bottom:.3rem;
+}
+.hint-card .hc-text{
+  font-size:.86rem;line-height:1.65;color:var(--muted);
+}
+.hint-card .hc-link{
+  display:inline-block;margin-top:.6rem;
+  font-size:.75rem;color:var(--glow);letter-spacing:.06em;
+}
+.hint-card .hc-link::after{content:' →'}
+
+/* ── SECTION CARDS (site navigation) ── */
+.pages-section{
+  padding:5rem 2rem;
+  background:var(--night);
+}
+.pages-inner{max-width:1080px;margin:0 auto}
+.pages-label{
+  font-size:.68rem;font-weight:500;letter-spacing:.35em;
+  text-transform:uppercase;color:var(--glow);margin-bottom:.7rem;
+}
+.pages-title{
+  font-family:'Fraunces',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;line-height:1.1;
+  color:var(--cream);margin-bottom:3rem;
+}
+.pages-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:1rem;
+}
+.page-card{
+  background:var(--faint);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:14px;padding:1.8rem;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;
+  gap:.5rem;
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+}
+.page-card::after{
+  content:'→';
+  position:absolute;bottom:1.6rem;right:1.6rem;
+  font-size:1.1rem;color:rgba(245,166,35,.25);
+  transition:color .25s,transform .25s;
+}
+.page-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(245,166,35,.25);
+  box-shadow:0 12px 40px rgba(0,0,0,.35);
+}
+.page-card:hover::after{color:var(--glow);transform:translate(3px,-3px)}
+.pc-icon{font-size:2rem;margin-bottom:.4rem}
+.pc-title{
+  font-family:'Fraunces',serif;font-size:1.15rem;
+  font-weight:700;color:var(--cream);
+}
+.pc-desc{font-size:.82rem;line-height:1.65;color:var(--muted)}
+.pc-filename{
+  margin-top:auto;padding-top:.8rem;
+  font-size:.67rem;letter-spacing:.15em;
+  color:rgba(245,166,35,.3);font-family:monospace;
+}
+
+/* ── FOOTER ── */
+footer{
+  background:#070604;
+  padding:2.2rem;text-align:center;
+  font-size:.76rem;color:rgba(253,246,236,.18);
+  letter-spacing:.06em;
+  border-top:1px solid rgba(245,166,35,.06);
+}
+footer a{color:rgba(245,166,35,.35);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--glow)}
+
+/* ── DIVIDER ── */
+hr.div{border:none;border-top:1px solid rgba(245,166,35,.08);margin:0}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s,transform .65s}
+.reveal.vis{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">🔥 Stockbrot</a>
+  <ul class="nav-links" id="nl">
+    <li><a href="seiten/teig.html" onclick="cn()">Rezept &amp; Teig</a></li>
+    <li><a href="seiten/toppings.html" onclick="cn()">Toppings</a></li>
+    <li><a href="seiten/stoecke.html" onclick="cn()">Stöcke</a></li>
+    <li><a href="seiten/lagerfeuer.html" onclick="cn()">Lagerfeuer</a></li>
+    <li><a href="seiten/gerichte.html" onclick="cn()">Gerichte</a></li>
+    <li><a href="seiten/impressum.html" onclick="cn()">Impressum</a></li>
+  </ul>
+  <button class="hamburger" id="hb" aria-label="Menü">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="stars" id="stars"></div>
+
+  <!-- Canvas fills the hero, sparks generated entirely inside -->
+  <canvas id="sparks"></canvas>
+
+  <div class="fire-glow"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Lagerfeuer-Abende für Groß &amp; Klein</div>
+    <h1 class="hero-title">
+      Stock<span class="accent">brot</span>
+    </h1>
+    <p class="hero-sub">
+      Warme Sommernächte, Funken im Wind, der Duft von Brot über der Glut –
+      und Menschen, die man mag.
+    </p>
+    <div class="hero-cta">
+      <a href="seiten/teig.html" class="btn btn-fire">Zum Teig-Rezept</a>
+      <a href="#seiten" class="btn btn-outline">Alle Themen</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Entdecken</span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<hr class="div"/>
+
+<!-- TEIG TEASER -->
+<div class="teaser-band">
+  <div class="teaser-inner">
+    <p class="teaser-label reveal">Das Herzstück</p>
+    <h2 class="teaser-title reveal">Zwei Grundteige –<br/>einfach, immer gut</h2>
+    <p class="teaser-sub reveal">
+      Nur wenige Zutaten, ein guter Stock, ein glühendes Feuer.
+      Diese Basisrezepte gelingen immer – auch mit Kindern und ohne Backerfahrung.
+    </p>
+
+    <div class="recipe-split">
+
+      <!-- HERZHAFT -->
+      <div class="recipe-mini savory reveal">
+        <span class="rm-icon">🧂</span>
+        <p class="rm-type">Herzhaft</p>
+        <h3 class="rm-name">Klassischer Hefeteig</h3>
+        <p class="rm-meta">⏱ 15 Min + 45 Min Gehzeit &nbsp;·&nbsp; 👥 6–8 Portionen</p>
+        <ul class="ing-list-mini">
+          <li><span class="iq">500 g</span><span class="in">Weizenmehl Type 550</span></li>
+          <li><span class="iq">1 Würfel</span><span class="in">frische Hefe (42 g)</span></li>
+          <li><span class="iq">300 ml</span><span class="in">lauwarmes Wasser</span></li>
+          <li><span class="iq">2 EL</span><span class="in">Olivenöl</span></li>
+          <li><span class="iq">1 TL</span><span class="in">Salz</span></li>
+        </ul>
+        <ol class="step-mini">
+          <li>Hefe im Wasser auflösen, 5 Min. aktivieren lassen.</li>
+          <li>Mehl + Salz mischen, Hefewasser und Öl zugeben.</li>
+          <li>Ca. 8 Min. zu glattem Teig kneten.</li>
+          <li>45 Min. abgedeckt gehen lassen.</li>
+          <li>Stränge auf den Stock wickeln und über der Glut goldbraun backen.</li>
+        </ol>
+        <p class="hint-note">🔥 Für Stockbrot braucht es Glut, keine offene Flamme – also etwas Geduld beim Feuer.</p>
+      </div>
+
+      <!-- SÜSS -->
+      <div class="recipe-mini sweet reveal">
+        <span class="rm-icon">🍯</span>
+        <p class="rm-type">Süß</p>
+        <h3 class="rm-name">Süßer Hefeteig</h3>
+        <p class="rm-meta">⏱ 15 Min + 45 Min Gehzeit &nbsp;·&nbsp; 👥 6–8 Portionen</p>
+        <ul class="ing-list-mini">
+          <li><span class="iq">500 g</span><span class="in">Weizenmehl Type 405</span></li>
+          <li><span class="iq">1 Würfel</span><span class="in">frische Hefe (42 g)</span></li>
+          <li><span class="iq">280 ml</span><span class="in">lauwarme Milch</span></li>
+          <li><span class="iq">2 EL</span><span class="in">weiche Butter</span></li>
+          <li><span class="iq">2 EL</span><span class="in">Zucker</span></li>
+          <li><span class="iq">1 Prise</span><span class="in">Salz</span></li>
+        </ul>
+        <ol class="step-mini">
+          <li>Hefe + Zucker in der Milch auflösen, 5 Min. aktivieren.</li>
+          <li>Mehl, Salz und Butter mischen, Hefemilch zugeben.</li>
+          <li>Ca. 8 Min. zu weichem Teig kneten.</li>
+          <li>45 Min. abgedeckt gehen lassen.</li>
+          <li>Auf den Stock wickeln und über der Glut goldbraun backen.</li>
+        </ol>
+        <p class="hint-note">🍭 Frisch vom Stock mit Honig, Nutella oder Marmelade – Toppings nach Belieben wählen.</p>
+      </div>
+
+    </div>
+
+    <!-- Feuer & Toppings: je 1 Satz -->
+    <div class="hint-row">
+      <a href="seiten/lagerfeuer.html" class="hint-card reveal">
+        <span class="hc-icon">🔥</span>
+        <div class="hc-body">
+          <p class="hc-label">Lagerfeuer</p>
+          <p class="hc-text">Das Feuer braucht Zeit – zünde es mindestens 40 Minuten vor dem Backen an und warte auf gleichmäßig glühende, weiß-graue Kohlen.</p>
+          <span class="hc-link">Anleitung &amp; Sicherheit</span>
+        </div>
+      </a>
+      <a href="seiten/toppings.html" class="hint-card reveal">
+        <span class="hc-icon">🧈</span>
+        <div class="hc-body">
+          <p class="hc-label">Toppings</p>
+          <p class="hc-text">Vom klassischen Butter &amp; Salz bis zu Miso-Butter oder Tahin mit Ahornsirup – frisch vom Stock schmeckt (fast) alles.</p>
+          <span class="hc-link">Alle Toppings entdecken</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<hr class="div"/>
+
+<!-- SEITEN-ÜBERSICHT -->
+<div class="pages-section" id="seiten">
+  <div class="pages-inner">
+    <p class="pages-label reveal">Alle Themen</p>
+    <h2 class="pages-title reveal">Was noch auf dich wartet</h2>
+    <div class="pages-grid">
+
+      <a href="seiten/teig.html" class="page-card reveal">
+        <span class="pc-icon">🍞</span>
+        <p class="pc-title">Teig &amp; Rezept</p>
+        <p class="pc-desc">Beide Grundteige ausführlich erklärt – mit Variationen, Tipps für die Vorbereitung zuhause und häufigen Fehlern.</p>
+        <p class="pc-filename">seiten/teig.html</p>
+      </a>
+
+      <a href="seiten/toppings.html" class="page-card reveal">
+        <span class="pc-icon">🧈</span>
+        <p class="pc-title">Toppings &amp; Dips</p>
+        <p class="pc-desc">Von bewährten Klassikern bis zu gewagten Kombinationen – alles was frisch vom Stock schmeckt.</p>
+        <p class="pc-filename">seiten/toppings.html</p>
+      </a>
+
+      <a href="seiten/stoecke.html" class="page-card reveal">
+        <span class="pc-icon">🪵</span>
+        <p class="pc-title">Stockauswahl</p>
+        <p class="pc-desc">Welche Holzarten eignen sich? Was ist giftig? Wie lang, wie dick, wie vorbereiten – und wann lieber Metallspieße.</p>
+        <p class="pc-filename">seiten/stoecke.html</p>
+      </a>
+
+      <a href="seiten/lagerfeuer.html" class="page-card reveal">
+        <span class="pc-icon">🔥</span>
+        <p class="pc-title">Lagerfeuer anlegen</p>
+        <p class="pc-desc">Schritt-für-Schritt-Anleitung, Sicherheitshinweise für Kinder und alles über Waldbrandschutz.</p>
+        <p class="pc-filename">seiten/lagerfeuer.html</p>
+      </a>
+
+      <a href="seiten/gerichte.html" class="page-card reveal">
+        <span class="pc-icon">🍽️</span>
+        <p class="pc-title">Weitere Gerichte</p>
+        <p class="pc-desc">Das Feuer brennt sowieso – Schoko-Bananen, Lagerfeuer-Kartoffeln, Camembert &amp; mehr für den ganzen Abend.</p>
+        <p class="pc-filename">seiten/gerichte.html</p>
+      </a>
+
+      <a href="seiten/impressum.html" class="page-card reveal">
+        <span class="pc-icon">📋</span>
+        <p class="pc-title">Impressum</p>
+        <p class="pc-desc">Angaben gemäß § 5 TMG, Kontakt und rechtliche Hinweise zur Website.</p>
+        <p class="pc-filename">seiten/impressum.html</p>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>🔥 Stockbrot – Lagerfeuer-Abende für Groß &amp; Klein
+  &nbsp;·&nbsp;
+  <a href="seiten/impressum.html">Impressum</a></p>
+</footer>
+
+<script>
+/* ── STERNE ── */
+(function(){
+  const c = document.getElementById('stars');
+  for(let i = 0; i < 140; i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 1.8 + 0.4;
+    s.style.cssText =
+      `width:${sz}px;height:${sz}px;` +
+      `top:${Math.random()*62}%;` +
+      `left:${Math.random()*100}%;` +
+      `--d:${(2+Math.random()*5).toFixed(1)}s;` +
+      `--dl:${(Math.random()*7).toFixed(1)}s`;
+    c.appendChild(s);
+  }
+})();
+
+/* ── FUNKEN-CANVAS ──
+   The canvas is absolutely positioned inside #hero (position:relative).
+   We re-measure it on every frame so it always matches the hero's actual
+   rendered size, even on mobile or after resize.
+*/
+(function(){
+  const canvas = document.getElementById('sparks');
+  const ctx    = canvas.getContext('2d');
+  const hero   = document.getElementById('hero');
+
+  let W = 0, H = 0;
+
+  function syncSize(){
+    const r = hero.getBoundingClientRect();
+    W = canvas.width  = Math.round(r.width);
+    H = canvas.height = Math.round(r.height);
+  }
+  // Sync immediately and on resize
+  syncSize();
+  window.addEventListener('resize', syncSize);
+
+  /* Spark constructor */
+  function Spark(){
+    this.reset = () => {
+      // Origin: bottom-center of the hero, spread ±130 px
+      this.x  = W * 0.5 + (Math.random() - 0.5) * 260;
+      this.y  = H;                                // bottom edge
+      this.vx = (Math.random() - 0.5) * 2.2;
+      this.vy = -(2 + Math.random() * 4.5);
+      this.life  = 1;
+      this.decay = 0.006 + Math.random() * 0.018;
+      this.r     = 0.8 + Math.random() * 2.6;
+      this.hue   = Math.random() > 0.55 ? 50 : 20 + Math.random() * 18;
+      this.white = Math.random() > 0.72;
+    };
+    this.reset();
+    this.life = Math.random(); // stagger on startup
+  }
+
+  const pool = [];
+  for(let i = 0; i < 90; i++) pool.push(new Spark());
+
+  let t0 = 0;
+  function frame(ts){
+    const dt = Math.min((ts - t0) / 16.67, 3); // cap at 3× normal frame
+    t0 = ts;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const now = ts * 0.001;
+    pool.forEach(p => {
+      p.x    += (p.vx + Math.sin(now + p.y * 0.025) * 0.45) * dt;
+      p.y    += p.vy * dt;
+      p.vy   *= Math.pow(0.985, dt);
+      p.life -= p.decay * dt;
+      if(p.life <= 0){ p.reset(); return; }
+
+      const a = Math.max(0, p.life);
+      ctx.globalAlpha = a;
+      ctx.fillStyle   = p.white
+        ? `rgba(255,248,225,${a})`
+        : `hsl(${p.hue},100%,${48 + p.life * 34}%)`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * Math.sqrt(Math.max(0, p.life)), 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ── SCROLL REVEAL ── */
+const obs = new IntersectionObserver(
+  entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); }),
+  { threshold: 0.1 }
+);
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── HAMBURGER ── */
+const hb = document.getElementById('hb');
+const nl = document.getElementById('nl');
+hb.addEventListener('click', () => nl.classList.toggle('open'));
+function cn(){ nl.classList.remove('open'); }
+</script>
+</body>
+</html>
