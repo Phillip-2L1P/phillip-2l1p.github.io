@@ -1,108 +1,1653 @@
 <!DOCTYPE html>
+<!--
+  ============================================================
+  FILE:    seiten/teig.html
+  PAGE:    Teig & Rezept
+  SITE:    Stockbrot – Lagerfeuer-Abende für Groß & Klein
+  ============================================================
+
+  STRUCTURE OF THIS FILE
+  ──────────────────────
+  1.  <head>
+        a) Fonts (Google Fonts CDN)
+        b) CSS – split into labelled sections:
+             SECTION 1  Design tokens  (colours, fonts, spacing)
+             SECTION 2  Reset & base
+             SECTION 3  Navigation (desktop + mobile)
+             SECTION 4  Page hero
+             SECTION 5  Table of contents
+             SECTION 6  Page-content wrapper
+             SECTION 7  Section headings
+             SECTION 8  Recipe card layout
+             SECTION 9  Info grid (variations / mistakes)
+             SECTION 10 Tip boxes
+             SECTION 11 FAQ accordion
+             SECTION 12 Checklist
+             SECTION 13 Next-page link
+             SECTION 14 Footer
+             SECTION 15 Scroll-reveal animation
+             SECTION 16 Mobile overrides (≤ 640 px)
+
+  2.  <body>
+        a) Navigation
+        b) Page hero
+        c) Table of contents
+        d) Main content
+             – Recipe: Herzhafter Hefeteig
+             – Recipe: Süßer Hefeteig
+             – Preparation & transport tips
+             – Dough variations
+             – Common mistakes
+             – FAQ accordion
+        e) Footer
+
+  3.  <script>
+        - hamburgerToggle()   opens/closes mobile nav
+        - closeNav()          closes mobile nav (called from nav links)
+        - initScrollReveal()  animates elements into view on scroll
+        - initFAQ()           handles FAQ accordion open/close
+
+  ============================================================
+-->
 <html lang="de">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Teig & Rezept – Stockbrot</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700;9..144,900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --night:#0f0d0a;--deep:#191410;--ember:#c94a0f;
-  --fire:#e8622a;--glow:#f5a623;--warm:#fde68a;
-  --cream:#fdf6ec;--muted:rgba(253,246,236,.55);
-  --faint:rgba(253,246,236,.06);--accent:#8ab87a;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--night);color:var(--cream);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.85rem 2.5rem;background:rgba(15,13,10,.82);backdrop-filter:blur(16px);border-bottom:1px solid rgba(245,166,35,.08)}
-.nav-logo{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--glow);font-weight:700;text-decoration:none}
-.nav-links{display:flex;gap:1.8rem;list-style:none}
-.nav-links a{color:rgba(253,246,236,.5);font-size:.8rem;letter-spacing:.08em;text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:var(--glow)}
-.hamburger{display:none;background:none;border:none;cursor:pointer;color:var(--glow);padding:.2rem}
-@media(max-width:680px){
-  nav{padding:.85rem 1.4rem}
-  .nav-links{display:none;position:fixed;inset:0;background:rgba(15,13,10,.97);flex-direction:column;align-items:center;justify-content:center;gap:2.2rem;z-index:200}
-  .nav-links.open{display:flex}
-  .nav-links a{font-size:1.15rem}
-  .hamburger{display:block;z-index:201}
-}
-.page-hero{
-  padding:9rem 2rem 5rem;
-  background:radial-gradient(ellipse 90% 60% at 50% 0%, rgba(232,98,42,.1) 0%, transparent 65%);
-  border-bottom:1px solid rgba(245,166,35,.08);
-}
-.page-hero-inner{max-width:800px;margin:0 auto}
-.ph-back{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:rgba(245,166,35,.45);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.8rem;transition:color .2s}
-.ph-back:hover{color:var(--glow)}
-.ph-badge{display:inline-block;border:1px solid;border-color:color-mix(in srgb,var(--accent) 40%,transparent);color:var(--accent);font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem;background:color-mix(in srgb,var(--accent) 8%,transparent)}
-.ph-title{font-family:'Fraunces',serif;font-size:clamp(2.4rem,7vw,4.5rem);font-weight:900;line-height:.95;color:var(--cream);margin-bottom:1rem}
-.ph-desc{font-size:1rem;line-height:1.8;color:var(--muted);max-width:560px}
-.page-content{padding:4rem 2rem 6rem;max-width:900px;margin:0 auto}
-.coming-soon{
-  background:var(--faint);
-  border:1px dashed rgba(245,166,35,.18);
-  border-radius:16px;padding:4rem 2rem;
-  text-align:center;
-}
-.cs-icon{font-size:4rem;margin-bottom:1.2rem;display:block}
-.cs-title{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:700;color:var(--cream);margin-bottom:.7rem}
-.cs-body{font-size:.92rem;line-height:1.8;color:var(--muted);max-width:440px;margin:0 auto 2rem}
-footer{background:#070604;padding:2rem;text-align:center;font-size:.76rem;color:rgba(253,246,236,.18);letter-spacing:.06em;border-top:1px solid rgba(245,166,35,.06)}
-footer a{color:rgba(245,166,35,.35);text-decoration:none;transition:color .2s}
-footer a:hover{color:var(--glow)}
-</style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teig &amp; Rezept – Stockbrot</title>
+
+  <!--
+    FONTS
+    ─────
+    Fraunces  → display/heading font (serif, variable: weight 300–900)
+    DM Sans   → body font (sans-serif, weights 300 400 500; italic 300)
+    Both loaded from Google Fonts CDN.
+  -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,700;9..144,900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+
+    /* ============================================================
+       SECTION 1 – DESIGN TOKENS
+       ============================================================
+       All colours and key values live here as CSS custom properties.
+       To change the look of the site, edit ONLY this section.
+
+       Colour palette
+       ──────────────
+       --night          page background (very dark brown-black)
+       --deep           slightly lighter background for cards
+       --ember          deep orange-red (fire base)
+       --fire           bright orange (primary accent / CTA)
+       --glow           golden amber (highlights, links, labels)
+       --warm           pale gold (warm text on dark)
+       --cream          near-white text colour
+       --muted          dimmed cream for body text
+       --faint          very transparent cream for card backgrounds
+       --accent         green (savoury recipe colour)
+       --accent-sweet   same amber as --glow (sweet recipe colour)
+    ============================================================ */
+    :root {
+      --night:        #0f0d0a;
+      --deep:         #191410;
+      --ember:        #c94a0f;
+      --fire:         #e8622a;
+      --glow:         #f5a623;
+      --warm:         #fde68a;
+      --cream:        #fdf6ec;
+      --muted:        rgba(253, 246, 236, 0.55);
+      --faint:        rgba(253, 246, 236, 0.05);
+      --accent:       #8ab87a;          /* savoury green */
+      --accent-sweet: #f5a623;          /* sweet amber (same as --glow) */
+
+      /* Typography scale */
+      --font-display: 'Fraunces', serif;
+      --font-body:    'DM Sans', sans-serif;
+
+      /* Spacing helpers */
+      --page-max:     860px;   /* max content width */
+      --section-gap:  4.5rem;  /* vertical gap before each new section label */
+    }
+
+
+    /* ============================================================
+       SECTION 2 – RESET & BASE STYLES
+    ============================================================ */
+
+    /* Remove default margin/padding; use border-box sizing everywhere */
+    * {
+      margin:     0;
+      padding:    0;
+      box-sizing: border-box;
+    }
+
+    /* Smooth anchor scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:  var(--night);
+      color:       var(--cream);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height:  100vh;
+      /* Prevent horizontal overflow on mobile */
+      overflow-x:  hidden;
+    }
+
+
+    /* ============================================================
+       SECTION 3 – NAVIGATION
+       ============================================================
+       The nav bar is fixed to the top of the viewport.
+       On desktop  → horizontal link list.
+       On mobile   → links hidden; hamburger button shown instead.
+                     Clicking the hamburger toggles class "open"
+                     on the <ul>, making it a fullscreen overlay.
+    ============================================================ */
+
+    nav {
+      position:        fixed;
+      top:             0;
+      left:            0;
+      right:           0;
+      z-index:         100;
+      display:         flex;
+      align-items:     center;
+      justify-content: space-between;
+      padding:         0.85rem 2.5rem;
+      background:      rgba(15, 13, 10, 0.84);
+      backdrop-filter: blur(16px);
+      border-bottom:   1px solid rgba(245, 166, 35, 0.08);
+    }
+
+    /* Site logo / home link */
+    .nav-logo {
+      font-family:     var(--font-display);
+      font-size:       1.2rem;
+      font-weight:     700;
+      color:           var(--glow);
+      text-decoration: none;
+      /* Prevent logo from shrinking when nav links overflow */
+      flex-shrink:     0;
+    }
+
+    /* Desktop nav link list */
+    .nav-links {
+      display:    flex;
+      gap:        1.8rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color:           rgba(253, 246, 236, 0.5);
+      font-size:       0.8rem;
+      letter-spacing:  0.08em;
+      text-decoration: none;
+      transition:      color 0.2s;
+      /* Prevent long labels wrapping */
+      white-space:     nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--glow);
+    }
+
+    /* Hamburger button – hidden on desktop, shown on mobile */
+    .hamburger {
+      display:    none;
+      background: none;
+      border:     none;
+      cursor:     pointer;
+      color:      var(--glow);
+      padding:    0.2rem;
+      /* Keep it above everything when mobile nav is open */
+      z-index:    201;
+    }
+
+
+    /* ============================================================
+       SECTION 4 – PAGE HERO
+       ============================================================
+       Full-width banner below the nav bar with a subtle radial
+       gradient background, a back link, a badge, title and intro.
+    ============================================================ */
+
+    .page-hero {
+      padding:    9rem 2rem 5rem;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% 0%,
+          rgba(138, 184, 122, 0.1) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 20% 100%,
+          rgba(232, 98, 42, 0.06) 0%, transparent 60%);
+      border-bottom: 1px solid rgba(245, 166, 35, 0.08);
+    }
+
+    /* Centred inner wrapper */
+    .page-hero-inner {
+      max-width: var(--page-max);
+      margin:    0 auto;
+    }
+
+    /* "← Startseite" link */
+    .ph-back {
+      display:         inline-flex;
+      align-items:     center;
+      gap:             0.4rem;
+      font-size:       0.75rem;
+      color:           rgba(245, 166, 35, 0.45);
+      text-decoration: none;
+      letter-spacing:  0.1em;
+      text-transform:  uppercase;
+      margin-bottom:   1.8rem;
+      transition:      color 0.2s;
+    }
+    .ph-back:hover { color: var(--glow); }
+
+    /* Small pill badge above the page title */
+    .ph-badge {
+      display:          inline-block;
+      border:           1px solid rgba(138, 184, 122, 0.3);
+      color:            var(--accent);
+      font-size:        0.65rem;
+      letter-spacing:   0.35em;
+      text-transform:   uppercase;
+      padding:          0.35rem 1rem;
+      border-radius:    999px;
+      margin-bottom:    1rem;
+      background:       rgba(138, 184, 122, 0.07);
+    }
+
+    /* Page H1 */
+    .ph-title {
+      font-family:  var(--font-display);
+      font-size:    clamp(2.4rem, 7vw, 4.5rem); /* fluid: min 2.4rem, preferred 7vw, max 4.5rem */
+      font-weight:  900;
+      line-height:  0.92;
+      color:        var(--cream);
+      margin-bottom: 1rem;
+    }
+
+    /* Subtitle / intro text */
+    .ph-desc {
+      font-size:  1.05rem;
+      line-height: 1.85;
+      color:       var(--muted);
+      max-width:   580px;
+    }
+
+
+    /* ============================================================
+       SECTION 5 – TABLE OF CONTENTS
+       ============================================================
+       Inline pill links just below the hero that jump to each
+       section on the page.
+    ============================================================ */
+
+    .toc {
+      max-width:   var(--page-max);
+      margin:      2.5rem auto 0;
+      padding:     0 2rem;
+      display:     flex;
+      flex-wrap:   wrap;
+      gap:         0.55rem;
+    }
+
+    .toc a {
+      display:         inline-block;
+      padding:         0.38rem 0.9rem;
+      border-radius:   999px;
+      font-size:       0.75rem;
+      letter-spacing:  0.06em;
+      background:      var(--faint);
+      border:          1px solid rgba(255, 255, 255, 0.08);
+      color:           var(--muted);
+      text-decoration: none;
+      transition:      background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .toc a:hover {
+      background:   rgba(138, 184, 122, 0.1);
+      border-color: rgba(138, 184, 122, 0.3);
+      color:        var(--accent);
+    }
+
+
+    /* ============================================================
+       SECTION 6 – PAGE-CONTENT WRAPPER
+    ============================================================ */
+
+    .content {
+      max-width: var(--page-max);
+      margin:    0 auto;
+      padding:   0 2rem 7rem;
+    }
+
+
+    /* ============================================================
+       SECTION 7 – SECTION HEADINGS
+       ============================================================
+       Each content section starts with:
+         .s-label   – small ALL-CAPS label (e.g. "Rezept 1")
+         .s-title   – large display heading
+         .s-body    – intro paragraph
+       The .sweet modifier switches the label colour to amber.
+    ============================================================ */
+
+    .s-label {
+      font-size:      0.66rem;
+      font-weight:    500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color:          var(--accent);
+      margin-bottom:  0.5rem;
+      margin-top:     var(--section-gap);
+      /* Offset for fixed nav so anchor targets don't hide under it */
+      scroll-margin-top: 6rem;
+    }
+
+    /* Amber variant for sweet-recipe sections */
+    .s-label.sweet { color: var(--accent-sweet); }
+
+    .s-title {
+      font-family:   var(--font-display);
+      font-size:     clamp(1.6rem, 4vw, 2.4rem);
+      font-weight:   700;
+      line-height:   1.05;
+      color:         var(--cream);
+      margin-bottom: 0.9rem;
+    }
+
+    .s-body {
+      font-size:     0.97rem;
+      line-height:   1.88;
+      color:         var(--muted);
+      max-width:     660px;
+      margin-bottom: 2rem;
+    }
+
+    /* Thin horizontal rule between major sections */
+    hr.rule {
+      border:     none;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin:     4rem 0;
+    }
+
+
+    /* ============================================================
+       SECTION 8 – RECIPE CARDS
+       ============================================================
+       Each recipe sits inside a .recipe-card.
+       The .savory variant has a green top-border;
+       the .sweet variant has an amber top-border.
+
+       Inside the card:
+         .rc-head         – icon + title row
+         .rc-body         – two-column grid: ingredients | steps
+         .col-label       – "Zutaten" / "Zubereitung" sub-heading
+         .ing-list        – ingredient list
+         .step-list       – numbered step list (counter via CSS)
+    ============================================================ */
+
+    .recipe-card {
+      background:    var(--faint);
+      border:        1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding:       2.4rem;
+      position:      relative;
+      overflow:      hidden;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Coloured accent line at the very top of each card */
+    .recipe-card.savory { border-top: 2px solid var(--accent); }
+    .recipe-card.sweet  { border-top: 2px solid var(--accent-sweet); }
+
+    /* ── Card header: icon + title block ── */
+    .rc-head {
+      display:     flex;
+      align-items: flex-start;
+      gap:         1.2rem;
+      margin-bottom: 1.8rem;
+      flex-wrap:   wrap;      /* wraps on very narrow screens */
+    }
+
+    .rc-icon {
+      font-size:  2.8rem;
+      flex-shrink: 0;
+    }
+
+    /* Recipe type label above the name */
+    .rc-type {
+      font-size:      0.65rem;
+      font-weight:    500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom:  0.25rem;
+    }
+    .savory .rc-type { color: var(--accent); }
+    .sweet  .rc-type { color: var(--accent-sweet); }
+
+    .rc-name {
+      font-family:  var(--font-display);
+      font-size:    1.8rem;
+      font-weight:  700;
+      color:        var(--cream);
+      line-height:  1.1;
+    }
+
+    /* Small metadata row (time, portions, temperature) */
+    .rc-timing {
+      display:   flex;
+      flex-wrap: wrap;
+      gap:       1.2rem;
+      margin-top: 0.6rem;
+    }
+
+    .rc-timing span {
+      font-size:   0.78rem;
+      color:       rgba(253, 246, 236, 0.35);
+      display:     flex;
+      align-items: center;
+      gap:         0.3rem;
+    }
+
+    /* ── Two-column body: ingredients | steps ── */
+    .rc-body {
+      display:               grid;
+      grid-template-columns: 1fr 1fr;
+      gap:                   2rem;
+    }
+
+    /* "Zutaten" / "Zubereitung" sub-label */
+    .col-label {
+      font-size:      0.63rem;
+      font-weight:    500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      padding-bottom: 0.6rem;
+      border-bottom:  1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom:  0.9rem;
+    }
+    .savory .col-label { color: var(--accent); }
+    .sweet  .col-label { color: var(--accent-sweet); }
+
+    /* Ingredient list */
+    .ing-list {
+      list-style: none;
+    }
+
+    .ing-list li {
+      display:       flex;
+      align-items:   baseline;
+      gap:           0.7rem;
+      padding:       0.42rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size:     0.9rem;
+    }
+
+    /* Quantity column – fixed width so all names line up */
+    .iq {
+      font-weight: 500;
+      min-width:   68px;
+      flex-shrink: 0;
+      font-size:   0.85rem;
+    }
+    .savory .iq { color: var(--accent); }
+    .sweet  .iq { color: var(--accent-sweet); }
+
+    /* Ingredient name */
+    .in { color: rgba(253, 246, 236, 0.72); }
+
+    /* Step list – CSS counter replaces <ol> default bullets */
+    .step-list {
+      list-style:    none;
+      counter-reset: st;          /* start counter at 0 */
+    }
+
+    .step-list li {
+      counter-increment: st;      /* increment each item */
+      display:       flex;
+      gap:           0.9rem;
+      padding:       0.6rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size:     0.88rem;
+      line-height:   1.7;
+      color:         rgba(253, 246, 236, 0.65);
+    }
+
+    /* Pseudo-element shows the counter number */
+    .step-list li::before {
+      content:     counter(st);
+      font-family: var(--font-display);
+      font-size:   1.15rem;
+      font-weight: 900;
+      flex-shrink: 0;
+      line-height: 1.3;
+    }
+    .savory .step-list li::before { color: var(--accent); }
+    .sweet  .step-list li::before { color: var(--accent-sweet); }
+
+
+    /* ============================================================
+       SECTION 9 – INFO GRID
+       ============================================================
+       Used for both "Variations" and "Common Mistakes" sections.
+       Cards are laid out in an auto-fit responsive grid.
+       Modifier classes change the heading colour:
+         .good    → green accent
+         .bad     → reddish warning colour
+         .neutral → amber/glow
+    ============================================================ */
+
+    .info-grid {
+      display:               grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap:                   1rem;
+      margin-top:            1.5rem;
+    }
+
+    .info-card {
+      background:    var(--faint);
+      border:        1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding:       1.5rem;
+      transition:    transform 0.25s, border-color 0.25s;
+    }
+
+    .info-card:hover {
+      transform:    translateY(-3px);
+      border-color: rgba(245, 166, 35, 0.18);
+    }
+
+    .info-card .ic-icon {
+      font-size:     1.8rem;
+      margin-bottom: 0.6rem;
+      display:       block;
+    }
+
+    .info-card h4 {
+      font-family:   var(--font-display);
+      font-size:     1rem;
+      font-weight:   700;
+      color:         var(--cream);
+      margin-bottom: 0.4rem;
+    }
+
+    .info-card p {
+      font-size:   0.84rem;
+      line-height: 1.7;
+      color:       var(--muted);
+    }
+
+    /* Colour variants */
+    .info-card.good         { border-color: rgba(138, 184, 122, 0.12); }
+    .info-card.good h4      { color: var(--accent); }
+    .info-card.bad          { border-color: rgba(232, 98,  42,  0.12); }
+    .info-card.bad h4       { color: #e87060; }
+    .info-card.neutral h4   { color: var(--glow); }
+
+
+    /* ============================================================
+       SECTION 10 – TIP BOXES
+       ============================================================
+       Highlighted callout boxes for pro tips.
+       .savory-tip → green left border
+       .sweet-tip  → amber left border
+    ============================================================ */
+
+    .tip {
+      padding:       1.1rem 1.4rem;
+      border-radius: 10px;
+      font-size:     0.86rem;
+      line-height:   1.75;
+      margin-top:    1.4rem;
+    }
+
+    .tip.savory-tip {
+      background:  rgba(138, 184, 122, 0.08);
+      border-left: 3px solid rgba(138, 184, 122, 0.4);
+      color:       rgba(253, 246, 236, 0.72);
+    }
+
+    .tip.sweet-tip {
+      background:  rgba(245, 166, 35, 0.07);
+      border-left: 3px solid rgba(245, 166, 35, 0.35);
+      color:       rgba(253, 246, 236, 0.72);
+    }
+
+    /* Small bold label inside a tip box */
+    .tip strong {
+      display:        block;
+      font-size:      0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom:  0.3rem;
+    }
+    .savory-tip strong { color: var(--accent); }
+    .sweet-tip  strong { color: var(--accent-sweet); }
+
+
+    /* ============================================================
+       SECTION 11 – FAQ ACCORDION
+       ============================================================
+       Each FAQ item consists of:
+         .faq-q   → <button> that toggles the answer
+         .faq-a   → answer panel; hidden by default (max-height: 0)
+
+       Open state: button gets aria-expanded="true", answer gets
+       class "open" which expands max-height to 300px.
+       The JS that drives this is in initFAQ() at the bottom.
+    ============================================================ */
+
+    .faq {
+      margin-top:     1.5rem;
+      display:        flex;
+      flex-direction: column;
+      gap:            0.7rem;
+    }
+
+    .faq-item {
+      background:    var(--faint);
+      border:        1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+      overflow:      hidden;
+    }
+
+    /* Clickable question button */
+    .faq-q {
+      width:           100%;
+      background:      none;
+      border:          none;
+      cursor:          pointer;
+      display:         flex;
+      justify-content: space-between;
+      align-items:     center;
+      padding:         1rem 1.3rem;
+      color:           var(--cream);
+      font-family:     var(--font-body);
+      font-size:       0.92rem;
+      font-weight:     400;
+      text-align:      left;
+      gap:             1rem;
+      transition:      background 0.2s;
+    }
+
+    .faq-q:hover { background: rgba(255, 255, 255, 0.04); }
+
+    /* The +/× icon rotates when open */
+    .faq-q svg {
+      flex-shrink: 0;
+      color:       var(--glow);
+      transition:  transform 0.3s;
+    }
+
+    /* Rotate the + into an × when expanded */
+    .faq-q[aria-expanded="true"] svg {
+      transform: rotate(45deg);
+    }
+
+    /* Answer panel – collapsed by default */
+    .faq-a {
+      max-height: 0;
+      overflow:   hidden;
+      transition: max-height 0.35s ease, padding 0.3s ease;
+      font-size:  0.87rem;
+      line-height: 1.78;
+      color:      var(--muted);
+      padding:    0 1.3rem;
+    }
+
+    /* .open class added by JS to expand the answer */
+    .faq-a.open {
+      max-height: 300px;                /* large enough for any answer */
+      padding:    0.1rem 1.3rem 1.2rem;
+    }
+
+
+    /* ============================================================
+       SECTION 12 – CHECKLIST
+       ============================================================
+       Simple list with a green check-mark pseudo-element.
+    ============================================================ */
+
+    .checklist {
+      list-style:     none;
+      margin-top:     0.5rem;
+      display:        flex;
+      flex-direction: column;
+      gap:            0.5rem;
+    }
+
+    .checklist li {
+      display:     flex;
+      align-items: baseline;
+      gap:         0.7rem;
+      font-size:   0.9rem;
+      line-height: 1.7;
+      color:       var(--muted);
+    }
+
+    /* Green checkmark icon */
+    .checklist li::before {
+      content:     '✓';
+      color:       var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+
+    /* ============================================================
+       SECTION 13 – NEXT-PAGE LINK
+       ============================================================
+       A wide clickable banner at the bottom of the page that
+       leads to the next section of the site.
+    ============================================================ */
+
+    .next-page {
+      display:         flex;
+      align-items:     center;
+      justify-content: space-between;
+      background:      var(--faint);
+      border:          1px solid rgba(255, 255, 255, 0.08);
+      border-radius:   14px;
+      padding:         1.6rem 2rem;
+      margin-top:      4rem;
+      text-decoration: none;
+      color:           inherit;
+      transition:      border-color 0.25s, transform 0.25s;
+    }
+
+    .next-page:hover {
+      border-color: rgba(245, 166, 35, 0.25);
+      transform:    translateX(4px);  /* subtle rightward nudge */
+    }
+
+    /* "Nächstes Thema" label */
+    .np-label {
+      font-size:      0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color:          var(--glow);
+      margin-bottom:  0.3rem;
+    }
+
+    .np-title {
+      font-family: var(--font-display);
+      font-size:   1.2rem;
+      font-weight: 700;
+      color:       var(--cream);
+    }
+
+    /* Emoji arrow on the right */
+    .np-arrow {
+      font-size:  1.6rem;
+      color:      rgba(245, 166, 35, 0.35);
+      transition: color 0.25s;
+    }
+    .next-page:hover .np-arrow { color: var(--glow); }
+
+
+    /* ============================================================
+       SECTION 14 – FOOTER
+    ============================================================ */
+
+    footer {
+      background:   #070604;
+      padding:      2rem;
+      text-align:   center;
+      font-size:    0.76rem;
+      color:        rgba(253, 246, 236, 0.18);
+      letter-spacing: 0.06em;
+      border-top:   1px solid rgba(245, 166, 35, 0.06);
+    }
+
+    footer a {
+      color:           rgba(245, 166, 35, 0.35);
+      text-decoration: none;
+      transition:      color 0.2s;
+    }
+    footer a:hover { color: var(--glow); }
+
+
+    /* ============================================================
+       SECTION 15 – SCROLL-REVEAL ANIMATION
+       ============================================================
+       Elements with class "reveal" start invisible and slightly
+       shifted down. When they enter the viewport, the JS function
+       initScrollReveal() adds class "vis" which transitions them
+       into their natural position.
+    ============================================================ */
+
+    .reveal {
+      opacity:    0;
+      transform:  translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.vis {
+      opacity:   1;
+      transform: none;
+    }
+
+
+    /* ============================================================
+       SECTION 16 – MOBILE OVERRIDES  (≤ 640 px)
+       ============================================================
+       All layout changes for small screens go here.
+       Grouped in one place so they are easy to find and edit.
+    ============================================================ */
+
+    @media (max-width: 640px) {
+
+      /* ── Navigation ── */
+
+      /* Reduce nav horizontal padding */
+      nav { padding: 0.85rem 1.2rem; }
+
+      /* On mobile the link list becomes a fullscreen overlay.
+         It is hidden by default and shown when the hamburger
+         adds the "open" class via JavaScript. */
+      .nav-links {
+        display:         none;           /* hidden by default on mobile */
+        position:        fixed;
+        inset:           0;              /* cover the whole viewport */
+        background:      rgba(15, 13, 10, 0.97);
+        flex-direction:  column;
+        align-items:     center;
+        justify-content: center;
+        gap:             2.2rem;
+        z-index:         200;            /* above everything */
+      }
+
+      .nav-links.open { display: flex; } /* JS toggles this class */
+
+      .nav-links a { font-size: 1.15rem; }
+
+      /* Show hamburger button on mobile */
+      .hamburger { display: block; }
+
+      /* ── Page hero ── */
+
+      /* Reduce top padding so title isn't crowded under nav */
+      .page-hero { padding: 7rem 1.2rem 3.5rem; }
+
+      /* ── Recipe card ── */
+
+      /* Stack ingredients and steps vertically instead of side by side */
+      .rc-body {
+        grid-template-columns: 1fr;
+        gap:                   1.4rem;
+      }
+
+      /* Allow the header row to wrap so the icon doesn't crush the text */
+      .rc-head { gap: 0.8rem; }
+
+      .rc-icon { font-size: 2.2rem; }
+
+      /* Slightly smaller recipe name */
+      .rc-name { font-size: 1.5rem; }
+
+      /* ── Info grid ── */
+
+      /* Single-column on small screens */
+      .info-grid { grid-template-columns: 1fr; }
+
+      /* ── Next-page link ── */
+
+      /* Reduce horizontal padding */
+      .next-page { padding: 1.3rem 1.4rem; }
+
+      /* ── Content padding ── */
+      .content { padding: 0 1.2rem 5rem; }
+
+      /* ── TOC ── */
+      .toc { padding: 0 1.2rem; }
+
+      /* ── General recipe card padding ── */
+      .recipe-card { padding: 1.6rem 1.2rem; }
+    }
+
+  </style>
 </head>
 <body>
-<nav>
-  <a href="../index.html" class="nav-logo">🔥 Stockbrot</a>
-  <ul class="nav-links" id="nl">
-    <li><a href="teig.html" onclick="cn()" style="color:var(--glow)">Rezept &amp; Teig</a></li>
-<li><a href="toppings.html" onclick="cn()" >Toppings</a></li>
-<li><a href="stoecke.html" onclick="cn()" >Stöcke</a></li>
-<li><a href="lagerfeuer.html" onclick="cn()" >Lagerfeuer</a></li>
-<li><a href="gerichte.html" onclick="cn()" >Gerichte</a></li>
-<li><a href="impressum.html" onclick="cn()" >Impressum</a></li>
 
-  </ul>
-  <button class="hamburger" id="hb" aria-label="Menü">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-    </svg>
-  </button>
-</nav>
+  <!--
+  ================================================================
+  NAVIGATION
+  ================================================================
+  Fixed top bar with logo + links.
+  The hamburger button is only visible on mobile (see CSS Section 16).
+  The "active" style on the current page link uses inline style here
+  so it works without JavaScript.
+  ================================================================
+  -->
+  <nav>
 
-<div class="page-hero">
-  <div class="page-hero-inner">
-    <a href="../index.html" class="ph-back">← Zurück zur Startseite</a>
-    <p class="ph-badge">Herzhaft & Süß</p>
-    <h1 class="ph-title">Teig & Rezept</h1>
-    <p class="ph-desc">Beide Grundteige ausführlich – mit Variationen, Tipps für die Vorbereitung und häufigen Fehlern.</p>
+    <!-- Site logo → back to homepage -->
+    <a href="../index.html" class="nav-logo">🔥 Stockbrot</a>
+
+    <!-- Link list. On mobile this becomes a fullscreen overlay.
+         The id "nl" is used by the hamburger JS below. -->
+    <ul class="nav-links" id="nl">
+      <!-- "active" class marks the current page (teig.html) -->
+      <li><a href="teig.html"        class="active"  onclick="closeNav()">Rezept &amp; Teig</a></li>
+      <li><a href="toppings.html"                    onclick="closeNav()">Toppings</a></li>
+      <li><a href="stoecke.html"                     onclick="closeNav()">Stöcke</a></li>
+      <li><a href="lagerfeuer.html"                  onclick="closeNav()">Lagerfeuer</a></li>
+      <li><a href="gerichte.html"                    onclick="closeNav()">Gerichte</a></li>
+      <li><a href="impressum.html"                   onclick="closeNav()">Impressum</a></li>
+    </ul>
+
+    <!-- Hamburger icon button – visible on mobile only -->
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menü öffnen">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="3"  y1="6"  x2="21" y2="6"/>
+        <line x1="3"  y1="12" x2="21" y2="12"/>
+        <line x1="3"  y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+  </nav>
+
+
+  <!--
+  ================================================================
+  PAGE HERO
+  ================================================================
+  Top banner with back-link, badge, page title and intro text.
+  ================================================================
+  -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+
+      <!-- Breadcrumb / back link -->
+      <a href="../index.html" class="ph-back">← Startseite</a>
+
+      <!-- Category badge -->
+      <p class="ph-badge">Herzhaft &amp; Süß</p>
+
+      <!-- Page title -->
+      <h1 class="ph-title">Teig &amp; Rezept</h1>
+
+      <!-- Intro text -->
+      <p class="ph-desc">
+        Zwei Grundteige, alle nötigen Infos zur Vorbereitung, häufige Fehler und
+        Variationen – damit das Stockbrot am Feuer garantiert gelingt.
+      </p>
+
+    </div>
   </div>
-</div>
 
-<main class="page-content">
-  <div class="coming-soon">
-    <span class="cs-icon">🍞</span>
-    <h2 class="cs-title">Diese Seite entsteht gerade</h2>
-    <p class="cs-body">
-      Der Inhalt für <strong style="color:var(--cream)">Teig & Rezept</strong> wird hier erscheinen.
-      Kehre bald zurück – oder starte mit dem Teig-Rezept auf der Startseite!
+
+  <!--
+  ================================================================
+  TABLE OF CONTENTS
+  ================================================================
+  Quick-jump pills linking to each section anchor on this page.
+  Anchors are placed on the .s-label element of each section.
+  ================================================================
+  -->
+  <nav class="toc" aria-label="Seiteninhalt">
+    <a href="#herzhaft">Herzhafter Teig</a>
+    <a href="#suess">Süßer Teig</a>
+    <a href="#vorbereitung">Vorbereitung &amp; Transport</a>
+    <a href="#variationen">Variationen</a>
+    <a href="#fehler">Häufige Fehler</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+
+
+  <!--
+  ================================================================
+  MAIN CONTENT
+  ================================================================
+  All page sections live inside this <main> element.
+  Each section follows this structure:
+
+    <p class="s-label reveal" id="anchor-name">Short label</p>
+    <h2 class="s-title reveal">Section heading</h2>
+    <p class="s-body reveal">Intro paragraph …</p>
+    … section-specific content …
+    <hr class="rule" />   ← thin separator between sections
+
+  The "reveal" class makes each element animate in when it
+  scrolls into the viewport (handled by initScrollReveal() in JS).
+  ================================================================
+  -->
+  <main class="content">
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         RECIPE 1 – HERZHAFTER HEFETEIG
+         Savoury yeast dough (neutral, works with any savoury topping)
+    ────────────────────────────────────────────────────────────── -->
+
+    <p class="s-label reveal" id="herzhaft">Der Klassiker</p>
+    <h2 class="s-title reveal">Herzhafter Hefeteig</h2>
+    <p class="s-body reveal">
+      Der klassische Stockbrotteig – geeignet für herzhafte Toppings, trotzdem aromatisch
+      genug um allein zu schmecken. Das Rezept funktioniert zuverlässig auch ohne
+      Backerfahrung.
     </p>
-    <a href="../index.html" class="btn" style="display:inline-block;padding:.72rem 1.8rem;border-radius:999px;background:linear-gradient(135deg,#e8622a,#c94a0f);color:#fff;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:500;box-shadow:0 4px 20px rgba(232,98,42,.35)">
-      Zur Startseite
-    </a>
-  </div>
-</main>
 
-<footer>
-  <p>🔥 Stockbrot – Lagerfeuer-Abende für Groß &amp; Klein &nbsp;·&nbsp; <a href="impressum.html">Impressum</a></p>
-</footer>
-<script>
-const hb=document.getElementById('hb'),nl=document.getElementById('nl');
-hb.addEventListener('click',()=>nl.classList.toggle('open'));
-function cn(){nl.classList.remove('open')}
-</script>
+    <div class="recipe-card savory reveal">
+
+      <!-- Card header: emoji + title + metadata -->
+      <div class="rc-head">
+        <span class="rc-icon" aria-hidden="true">🧂</span>
+        <div>
+          <p class="rc-type">Herzhaft</p>
+          <h3 class="rc-name">Klassischer Hefeteig</h3>
+          <div class="rc-timing">
+            <span>⏱ 15 Min. Zubereitung</span>
+            <span>⏳ 45–60 Min. Gehzeit</span>
+            <span>👥 6–8 Portionen</span>
+            <span>🌡 Wasser ~38 °C (handwarm)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column body: ingredients on the left, steps on the right -->
+      <div class="rc-body">
+
+        <!-- Left column: ingredients -->
+        <div>
+          <p class="col-label">Zutaten</p>
+          <ul class="ing-list">
+            <li><span class="iq">500 g</span>   <span class="in">Weizenmehl Type 550</span></li>
+            <li><span class="iq">1 Würfel</span> <span class="in">frische Hefe (42 g) oder 1 Päckchen Trockenhefe (7 g)</span></li>
+            <li><span class="iq">300 ml</span>   <span class="in">lauwarmes Wasser</span></li>
+            <li><span class="iq">2 EL</span>     <span class="in">Olivenöl oder neutrales Öl</span></li>
+            <li><span class="iq">1 TL</span>     <span class="in">Salz</span></li>
+          </ul>
+        </div>
+
+        <!-- Right column: preparation steps -->
+        <div>
+          <p class="col-label">Zubereitung</p>
+          <ol class="step-list">
+            <li>Hefe im lauwarmen Wasser auflösen und 5 Minuten stehen lassen, bis sich Schaum bildet – so testest du ob die Hefe aktiv ist.</li>
+            <li>Mehl und Salz in einer großen Schüssel mischen. In der Mitte eine Mulde formen.</li>
+            <li>Hefewasser und Olivenöl in die Mulde gießen.</li>
+            <li>Alles von innen nach außen zu einem Teig zusammenarbeiten, dann ca. 8 Minuten kräftig kneten bis der Teig glatt, elastisch und nicht mehr klebrig ist.</li>
+            <li>Schüssel mit einem feuchten Tuch oder Frischhaltefolie abdecken. An einem warmen Ort (ca. 25–30 °C) 45–60 Minuten gehen lassen.</li>
+            <li>Teig nochmals kurz durchkneten. Daumendicke Stränge (ca. 2 cm Ø, 30–40 cm lang) formen und straff spiralförmig auf das vorbereitete Stockende wickeln. Enden gut andrücken.</li>
+            <li>Über gleichmäßiger Glut – keine offene Flamme – bei mittlerem Abstand 8–12 Minuten backen, dabei kontinuierlich drehen.</li>
+          </ol>
+        </div>
+
+      </div><!-- /.rc-body -->
+
+      <!-- Tip box -->
+      <div class="tip savory-tip">
+        <strong>🔑 Erkennungszeichen: fertig gebacken</strong>
+        Das Stockbrot ist fertig wenn es sich leicht vom Stock löst. Am besten ein sauberes Geschirrtuch zum abziehen verwenden. 
+        Am Stock darf dabei nichts kleben bleiben, ansonsten war es noch nicht durchgebacken.
+        Im Zweifel lieber eine Minute länger, solange es nicht schwarz ist.
+      </div>
+
+    </div><!-- /.recipe-card.savory -->
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         RECIPE 2 – SÜSSER HEFETEIG
+         Sweet yeast dough (softer, great with honey / jam / Nutella)
+    ────────────────────────────────────────────────────────────── -->
+
+    <p class="s-label sweet reveal" id="suess">Die süße Alternative</p>
+    <h2 class="s-title reveal">Süßer Hefeteig</h2>
+    <p class="s-body reveal">
+      Weicher, leicht buttrig – ideal für Kinder.
+      Die Milch statt Wasser macht den Teig zarter und gibt ihm eine schöne Farbe beim Backen.
+    </p>
+
+    <div class="recipe-card sweet reveal">
+
+      <!-- Card header -->
+      <div class="rc-head">
+        <span class="rc-icon" aria-hidden="true">🍯</span>
+        <div>
+          <p class="rc-type">Süß</p>
+          <h3 class="rc-name">Süßer Hefeteig</h3>
+          <div class="rc-timing">
+            <span>⏱ 15 Min. Zubereitung</span>
+            <span>⏳ 45–60 Min. Gehzeit</span>
+            <span>👥 6–8 Portionen</span>
+            <span>🌡 Milch ~38 °C (handwarm)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column body -->
+      <div class="rc-body">
+
+        <!-- Left column: ingredients -->
+        <div>
+          <p class="col-label">Zutaten</p>
+          <ul class="ing-list">
+            <li><span class="iq">500 g</span>    <span class="in">Weizenmehl Type 405</span></li>
+            <li><span class="iq">1 Würfel</span>  <span class="in">frische Hefe (42 g) oder 1 Päckchen Trockenhefe (7 g)</span></li>
+            <li><span class="iq">280 ml</span>    <span class="in">lauwarme Milch</span></li>
+            <li><span class="iq">2 EL</span>      <span class="in">weiche Butter (ca. 30 g)</span></li>
+            <li><span class="iq">2 EL</span>      <span class="in">Zucker</span></li>
+            <li><span class="iq">1 Prise</span>   <span class="in">Salz</span></li>
+          </ul>
+        </div>
+
+        <!-- Right column: steps -->
+        <div>
+          <p class="col-label">Zubereitung</p>
+          <ol class="step-list">
+            <li>Hefe und Zucker in der lauwarmen Milch auflösen. 5 Minuten warten bis die Hefe zu schäumen beginnt.</li>
+            <li>Mehl, Salz und Butter in einer Schüssel mischen. Die weiche Butter lässt sich gut mit den Fingern einarbeiten.</li>
+            <li>Hefemilch zum Mehl geben und alles zu einem Teig zusammenarbeiten.</li>
+            <li>Ca. 8 Minuten kneten bis der Teig weich, glatt und leicht elastisch ist. Er darf etwas klebriger sein als der herzhafte Teig.</li>
+            <li>Abgedeckt 45–60 Minuten gehen lassen bis der Teig sich verdoppelt hat.</li>
+            <li>Teig durchkneten, Stränge formen und fest auf den Stock wickeln. Die Enden besonders gut andrücken – der weichere Teig löst sich sonst leichter.</li>
+            <li>Über der Glut goldbraun backen. Der süße Teig nimmt durch Zucker und Milch etwas schneller Farbe an – Abstand zum Feuer ggf. etwas größer wählen.</li>
+          </ol>
+        </div>
+
+      </div><!-- /.rc-body -->
+
+      <!-- Tip box -->
+      <div class="tip sweet-tip">
+        <strong>💡 Tipp: noch mehr Geschmack</strong>
+        Eine Prise Zimt oder der Abrieb einer halben Zitrone in den Teig kneten. Das macht
+        ihn aromatischer ohne das Grundrezept zu verkomplizieren.
+      </div>
+
+    </div><!-- /.recipe-card.sweet -->
+
+
+    <hr class="rule" />
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         VORBEREITUNG & TRANSPORT
+         How to prepare the dough at home and bring it to the fire
+    ────────────────────────────────────────────────────────────── -->
+
+    <p class="s-label reveal" id="vorbereitung">Vorbereitung &amp; Transport</p>
+    <h2 class="s-title reveal">Teig zuhause vorbereiten</h2>
+    <p class="s-body reveal">
+      Beide Teige lassen sich problemlos zuhause vorbereiten und entspannt zum Lagerfeuer
+      mitnehmen.
+    </p>
+
+    <!-- Info grid: 4 cards in an auto-fit responsive grid -->
+    <div class="info-grid reveal">
+
+      <div class="info-card neutral">
+        <span class="ic-icon" aria-hidden="true">🧊</span>
+        <h4>Im Kühlschrank</h4>
+        <p>
+          Der Teig ist in einer zugedeckten Schüssel oder luftdichte Dose bis zu 24 Stunden haltbar. Die Kälte
+          verlangsamt die Hefe. Den Teig 20–30 Min. vor dem Wickeln herausnehmen und
+          warm werden lassen.
+        </p>
+      </div>
+
+      <div class="info-card neutral">
+        <span class="ic-icon" aria-hidden="true">❄️</span>
+        <h4>Einfrieren</h4>
+        <p>
+          Fertig gegangenen Teig portionieren, in Frischhaltefolie wickeln und einfrieren.
+          Hält 2–3 Monate. Zum Auftauen über Nacht in den Kühlschrank, dann 30 Min. bei
+          Raumtemperatur stehen lassen.
+        </p>
+      </div>
+
+      <div class="info-card neutral">
+        <span class="ic-icon" aria-hidden="true">🚗</span>
+        <h4>Transport</h4>
+        <p>
+          Mitnehmen ist in einer Tupperbox oder einem gut verschlossenen Gefrierbeutel möglich. Eine Kühlbox zu verwenden hilft,
+          wenn es draußen heiß ist, sonst geht der Teig unkontrolliert weiter auf.
+        </p>
+      </div>
+
+
+    </div><!-- /.info-grid -->
+
+    <!-- Tip box: timing advice -->
+    <div class="tip savory-tip reveal">
+      <strong>Mengen anpassen</strong>
+      Beide Rezepte lassen sich problemlos verdoppeln oder halbieren. Faustregel: Teig aus
+      ca. 80–100 g Mehl pro Person ergibt ein gutes Stockbrot.
+      Für Kinder reichen 60–70 g.
+    </div>
+
+
+    <hr class="rule" />
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         VARIATIONEN
+         Optional add-ins and flour substitutions
+    ────────────────────────────────────────────────────────────── -->
+
+    <p class="s-label reveal" id="variationen">Variationen</p>
+    <h2 class="s-title reveal">Den Teig verfeinern</h2>
+    <p class="s-body reveal">
+      Die Grundrezepte sind neutral gehalten. Wer möchte, kann sie mit wenigen
+      Handgriffen verfeinern – ohne die Zuverlässigkeit zu opfern.
+    </p>
+
+    <div class="info-grid reveal">
+
+      <div class="info-card good">
+        <span class="ic-icon" aria-hidden="true">🌿</span>
+        <h4>Kräuter-Variante</h4>
+        <p>1–2 EL frische oder getrocknete Kräuter (Rosmarin, Thymian, Oregano) und 1 gepresste Knoblauchzehe beim Kneten einarbeiten. Passt zum herzhaften Teig.</p>
+      </div>
+
+      <div class="info-card good">
+        <span class="ic-icon" aria-hidden="true">🧀</span>
+        <h4>Käse-Variante</h4>
+        <p>Mindestens 50 g fein geriebenen Parmesan oder alten Gouda pro 500g Mehl in den herzhaften Teig kneten. Der Käse schmilzt beim Backen in die Kruste und gibt leckere Röstaromen.</p>
+      </div>
+
+      <div class="info-card good">
+        <span class="ic-icon" aria-hidden="true">🌰</span>
+        <h4>Vollkorn-Variante</h4>
+        <p>Bis zu 50 % des Weizenmehls durch Vollkornmehl ersetzen. Den Wasseranteil leicht erhöhen (ca. +20 ml) da Vollkorn mehr Flüssigkeit bindet. Kräftiger im Geschmack.</p>
+      </div>
+
+      <div class="info-card good">
+        <span class="ic-icon" aria-hidden="true">🫙</span>
+        <h4>Oliven &amp; Tomaten</h4>
+        <p>Gehackte schwarze Oliven oder getrocknete Tomaten (gut abtropfen lassen) in den herzhaften Teig einarbeiten. Das gibt eine mediterrane Note.</p>
+      </div>
+
+      <div class="info-card good">
+        <span class="ic-icon" aria-hidden="true">🍋</span>
+        <h4>Zitronen-Zimt (süß)</h4>
+        <p>Abrieb einer Zitrone + ½ TL Zimt + 1 TL Vanillezucker in den süßen Teig geben. Harmoniert perfekt mit Honig oder Frischkäse als Topping.</p>
+      </div>
+
+      <div class="info-card neutral">
+        <span class="ic-icon" aria-hidden="true">🌾</span>
+        <h4>Ohne Gluten</h4>
+        <p>Glutenfreies Brotmehl 1:1 ersetzen und die Wassermenge auf ca. 270 ml reduzieren. Der Teig bleibt klebriger – er lässt sich trotzdem wickeln wenn man die Hände ölt.</p>
+      </div>
+
+    </div><!-- /.info-grid -->
+
+
+    <hr class="rule" />
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         HÄUFIGE FEHLER
+         Six common problems and their solutions
+    ────────────────────────────────────────────────────────────── -->
+
+    <p class="s-label reveal" id="fehler">Häufige Fehler</p>
+    <h2 class="s-title reveal">Was schief gehen kann – und wie nicht</h2>
+    <p class="s-body reveal">
+      Die meisten Probleme beim Stockbrot haben eine von drei Ursachen: falsches Wasser,
+      zu wenig Knetzeit oder zu viel Hitze. Hier die häufigsten Probleme und ihre Lösungen.
+    </p>
+
+    <div class="info-grid reveal">
+
+      <div class="info-card bad">
+        <span class="ic-icon" aria-hidden="true">🦠</span>
+        <h4>Hefe geht nicht auf</h4>
+        <p>Wasser war zu heiß oder zu kalt. Lösung: Handwarm testen – das Wasser soll sich angenehm anfühlen, nicht brennen. Frische Hefe vor dem Kauf auf das Datum prüfen, auch Trockenhefe darf nicht zu alt sein.</p>
+      </div>
+
+      <div class="info-card bad">
+        <span class="ic-icon" aria-hidden="true">💧</span>
+        <h4>Teig klebt zu stark</h4>
+        <p>Nicht panisch Mehl nachschütten – lieber weiter kneten. Das kann von besonders von Hand durchaus 10 Minuten dauern. Nur wenn der Teig sich wirklich nicht formen lässt: 1 EL Mehl einarbeiten, dann warten.</p>
+      </div>
+
+      <div class="info-card bad">
+        <span class="ic-icon" aria-hidden="true">🥣</span>
+        <h4>Teig zu fest und trocken</h4>
+        <p>Zu wenig Wasser oder zu viel Mehl. Harter Teig lässt sich schlecht wickeln und reißt. Lösung: 1 TL lauwarmes Wasser einkneten, 5 Min. ruhen lassen, wiederholen bis der Teig besser wird.</p>
+      </div>
+
+      <div class="info-card bad">
+        <span class="ic-icon" aria-hidden="true">🔥</span>
+        <h4>Verbrennt außen, roh innen</h4>
+        <p>Zu nahe an der Flamme statt über der Glut, oder Teig zu dick gewickelt. Lösung: mehr Abstand, dünnere Stränge (max. 2 cm Ø), langsamer und gleichmäßiger drehen.</p>
+      </div>
+
+      <div class="info-card bad">
+        <span class="ic-icon" aria-hidden="true">🥢</span>
+        <h4>Teig fällt vom Stock</h4>
+        <p>Teig zu locker gewickelt oder Enden nicht festgedrückt. Lösung: Stock schälen und scharf anspitzen, Teig fester wickeln und Enden mindestens 2–3 cm eindrücken.</p>
+      </div>
+
+      <div class="info-card bad">
+        <span class="ic-icon" aria-hidden="true">⏱</span>
+        <h4>Keine Zeit zum Gehen lassen</h4>
+        <p>Hefeteig der nicht gegangen ist bleibt kompakt und entwickelt wenig Geschmack. Notlösung: Teig an einem warmen Ort 20 Min. nahe – aber nicht zu nah – am Feuer ruhen lassen.</p>
+      </div>
+
+    </div><!-- /.info-grid -->
+
+    <!-- Checklist: before you start baking -->
+    <div class="tip savory-tip reveal">
+      <strong>✅ Checkliste vor dem Backen</strong>
+      <ul class="checklist">
+        <li>Teig hat sich deutlich vergrößert (mind. 50 % mehr Volumen)</li>
+        <li>Teig ist weich, elastisch und nicht mehr klebrig</li>
+        <li>Stöcke sind geschält, angespitzt und feucht</li>
+        <li>Feuer hat gleichmäßige, weiß-graue Glut – keine offene Flamme</li>
+        <li>Toppings und Dips stehen bereit</li>
+        <li>Wasser zum Löschen ist in der Nähe</li>
+      </ul>
+    </div>
+
+
+    <hr class="rule" />
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         FAQ ACCORDION
+         Six questions; each expands/collapses via initFAQ() in JS
+    ────────────────────────────────────────────────────────────── -->
+
+    <p class="s-label reveal" id="faq">Häufige Fragen</p>
+    <h2 class="s-title reveal">FAQ</h2>
+
+    <!-- Each .faq-item contains a <button> (.faq-q) and a div (.faq-a).
+         aria-expanded starts "false"; JS toggles it to "true" on click.
+         The .faq-a panel animates via max-height transition (see CSS Section 11). -->
+    <div class="faq reveal">
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Kann ich Trockenhefe statt frischer Hefe verwenden?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Ja, unbedingt. Ein Päckchen Trockenhefe (7 g) ersetzt einen Würfel frische Hefe
+          (42 g) vollständig. Trockenhefe besser genauso aktivieren wie Frischhefe, auch wenn es anders auf der Packung steht. 
+          Gerade mit etwas älterer Hefe kann das den Unterschied machen. Der Vorteil von Trockenhefe: länger haltbar und leichter zu transportieren.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Wie erkenne ich ob der Teig genug gegangen ist?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Der Teig sollte mindestens 50–70 % größer geworden sein als am Anfang.
+          Drücke kurz mit dem Finger rein: springt der Abdruck langsam zurück, ist der
+          Teig gut. Springt er sofort zurück, braucht er noch Zeit. Bleibt der Abdruck,
+          ist er übergegangen – noch verwendbar, aber nicht ideal.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Kann ich den Teig auch ohne Hefe machen?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Ja. Ein einfacher Rührteig aus 300 g Mehl, 1 TL Backpulver, 1 Prise Salz,
+          2 EL Öl und ca. 160 ml Wasser funktioniert ohne Gehzeit – sofort verwendbar.
+          Das Ergebnis ist viel kompakter und kaum luftig, aber brauchbar für spontane Aktionen.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Welches Mehl ist am besten geeignet?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Type 550 (herzhaft) und Type 405 (süß) sind die Empfehlungen. Type 405 ist
+          feiner und ergibt einen weicheren Teig. Type 550 hat mehr Eigengeschmack.
+          Bei leicht angepasster Flüssigkeitsmenge lässt sich aber praktisch alles Mehl aus dem Supermarkt verwenden. 
+          Zu beachten ist, dass das Brot bei exotischen Mehlen auch deren Geschmack annimmt. 
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Wie lange hält fertig gebackenes Stockbrot?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Stockbrot schmeckt frisch am besten – direkt vom Stock. Es trocknet schnell aus.
+          Übrig gebliebenes in Folie wickeln, dann wird es einige Stunden haltbar. Am nächsten Tag kurz
+          aufbacken (150 °C, 5 Min.) oder einfrieren. So gut wie frisch aus dem Feuer wird es danach jedoch nicht mehr schmecken.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">
+          Wie dünn soll der Teigstrang auf dem Stock sein?
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5"  y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="faq-a">
+          Die Teigschicht selbst sollte deutlich unter 1cm bleiben, besser sind 0,5 cm. Dicker gewickelter Teig braucht deutlich
+          länger und ist innen oft noch roh wenn er außen schon braun ist. Den Strang also
+          eher dünn und dicht spiralisieren – das Brot gart dann gleichmäßig durch.
+        </div>
+      </div>
+
+    </div><!-- /.faq -->
+
+
+    <!-- ──────────────────────────────────────────────────────────
+         NEXT PAGE LINK
+         Full-width clickable card leading to the next site section
+    ────────────────────────────────────────────────────────────── -->
+    <a href="toppings.html" class="next-page reveal">
+      <div>
+        <p class="np-label">Nächstes Thema</p>
+        <p class="np-title">Toppings &amp; Dips</p>
+      </div>
+      <span class="np-arrow" aria-hidden="true">🧈</span>
+    </a>
+
+
+  </main><!-- /.content -->
+
+
+  <!--
+  ================================================================
+  FOOTER
+  ================================================================
+  -->
+  <footer>
+    <p>
+      🔥 Stockbrot – Lagerfeuer-Abende für Groß &amp; Klein - Beachten Sie die Sicherheitshinweise und geltendes Gesetz zum offenen Feuer.
+      &nbsp;·&nbsp;
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
+
+
+  <!--
+  ================================================================
+  JAVASCRIPT
+  ================================================================
+  All interactivity is split into named, documented functions.
+  Functions are called at the bottom of the script once the DOM
+  is fully parsed (no DOMContentLoaded wrapper needed because the
+  script tag is at the end of <body>).
+  ================================================================
+  -->
+  <script>
+
+    /**
+     * hamburgerToggle()
+     * ─────────────────
+     * Toggles the mobile navigation overlay open and closed.
+     * Called by a click event on the hamburger button (#hamburgerBtn).
+     *
+     * Mechanism:
+     *   - Reads the current aria-label of the button so screen-readers
+     *     announce the correct state.
+     *   - Toggles class "open" on the <ul> (#nl).
+     *     When "open" is present, CSS makes the list visible (display:flex)
+     *     as a fullscreen overlay (see CSS Section 16).
+     *   - Updates aria-expanded on the button for accessibility.
+     */
+    function hamburgerToggle() {
+      const nav    = document.getElementById('nl');
+      const btn    = document.getElementById('hamburgerBtn');
+      const isOpen = nav.classList.toggle('open');  // returns true if now open
+
+      btn.setAttribute('aria-label',    isOpen ? 'Menü schließen' : 'Menü öffnen');
+      btn.setAttribute('aria-expanded', isOpen ? 'true'           : 'false');
+    }
+
+    // Attach click listener to the hamburger button
+    document.getElementById('hamburgerBtn')
+      .addEventListener('click', hamburgerToggle);
+
+
+    /**
+     * closeNav()
+     * ──────────
+     * Explicitly closes the mobile navigation overlay.
+     * Called via onclick="closeNav()" on each nav link so the
+     * overlay disappears as soon as the user taps a link.
+     *
+     * Also resets the hamburger button's aria attributes.
+     */
+    function closeNav() {
+      const nav = document.getElementById('nl');
+      const btn = document.getElementById('hamburgerBtn');
+
+      nav.classList.remove('open');
+      btn.setAttribute('aria-label',    'Menü öffnen');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+
+    /**
+     * initScrollReveal()
+     * ──────────────────
+     * Uses the IntersectionObserver API to animate elements into
+     * view as they scroll into the visible viewport.
+     *
+     * How it works:
+     *   1. Every element with class "reveal" starts invisible
+     *      (opacity:0, translateY:22px – see CSS Section 15).
+     *   2. An IntersectionObserver watches all .reveal elements.
+     *   3. When an element's top edge crosses 10 % of the viewport,
+     *      the observer adds class "vis", which triggers the CSS
+     *      transition and animates the element into its natural position.
+     *   4. Once visible, the observer stops watching that element
+     *      (unobserve) to save resources.
+     *
+     * @param {number} threshold - Fraction of element that must be
+     *   visible before triggering (0.1 = 10 %).
+     */
+    function initScrollReveal(threshold = 0.1) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('vis');
+              observer.unobserve(entry.target); // stop watching once visible
+            }
+          });
+        },
+        { threshold }
+      );
+
+      // Observe every element that has the "reveal" class
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    }
+
+
+    /**
+     * initFAQ()
+     * ─────────
+     * Wires up the FAQ accordion behaviour.
+     *
+     * How it works:
+     *   - Finds every .faq-q button (each is the clickable question).
+     *   - On click:
+     *       1. Read whether this item is already open
+     *          (aria-expanded === "true").
+     *       2. Close ALL items (collapse every answer panel, reset
+     *          every button's aria-expanded to "false").
+     *       3. If the clicked item was previously closed, open it:
+     *          - Set aria-expanded="true" on the button.
+     *          - Add class "open" to the sibling .faq-a div.
+     *            CSS uses max-height transition on .open to animate
+     *            the panel open (see CSS Section 11).
+     *
+     * This gives "only one open at a time" behaviour. Clicking an
+     * already-open question closes it (toggle effect).
+     */
+    function initFAQ() {
+      const questions = document.querySelectorAll('.faq-q');
+
+      questions.forEach((btn) => {
+        btn.addEventListener('click', () => {
+
+          // Was this question already open before the click?
+          const wasOpen = btn.getAttribute('aria-expanded') === 'true';
+
+          // Step 1: Close everything
+          questions.forEach((otherBtn) => {
+            otherBtn.setAttribute('aria-expanded', 'false');
+            // The answer panel is always the next sibling element
+            otherBtn.nextElementSibling.classList.remove('open');
+          });
+
+          // Step 2: If it was closed, open this one
+          if (!wasOpen) {
+            btn.setAttribute('aria-expanded', 'true');
+            btn.nextElementSibling.classList.add('open');
+          }
+          // If it was already open, we already closed it in Step 1 – done.
+
+        });
+      });
+    }
+
+
+    /* ── Initialise all interactive features ── */
+    initScrollReveal();
+    initFAQ();
+
+  </script>
+
 </body>
 </html>
